@@ -1,0 +1,39 @@
+# Rouvem Pishchik 4514562
+	.pos 0
+	irmovq stack, %rsp
+	call main
+	halt
+
+	.align 8
+ele1:
+	.quad 0x00a
+	.quad ele2
+ele2:
+	.quad 0x0b0
+	.quad ele3
+ele3:
+	.quad 0xc00
+	.quad 0
+main:
+	irmovq ele1, %rdi
+	call max
+	ret
+max:
+	irmovq $16, %r8
+	xorq %rax, %rax
+	mrmovq (%rdi), %r10
+	andq %r10, %r10
+	je return
+loop:
+	mrmovq (%rdi), %r9
+	mrmovq 8(%rdi), %r10
+	cmovg %r9, %rax
+	addq %r8, %rdi
+	andq %r10, %r10
+	jne loop
+return:
+	ret
+
+
+.pos 0x200
+stack:

@@ -1,0 +1,44 @@
+# Rouvem Pishchik 4514562
+	.pos 0
+	irmovq stack, %rsp
+	call main
+	halt
+
+.align 8
+src:
+	.quad 0x00a
+	.quad 0x0b0
+	.quad 0xc00
+dest:
+	.quad 0x111
+	.quad 0x222
+	.quad 0x333
+main:
+	irmovq src, %rdi
+	irmovq dest, %rsi
+	irmovq $3, %rdx
+	call copy
+	ret
+copy:
+	xorq %rax, %rax
+	irmovq $8, %r8
+	irmovq $1, %r9
+	rrmovq %rdx, %r10
+	andq %r10, %r10
+	jmp test
+loop:
+	mrmovq (%rdi), %rbx
+	rmmovq %rbx, (%rsi)
+	xorq %rbx, %rax
+	addq %r8, %rdi
+	addq %r8, %rsi
+	subq %r9, %r10
+test:
+	jne loop
+	#mrmovq -24(%rsi), %r11
+	#mrmovq -16(%rsi), %r12
+	#mrmovq -8(%rsi), %r13
+	ret
+
+.pos 0x400
+stack:

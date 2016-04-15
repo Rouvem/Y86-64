@@ -1,0 +1,58 @@
+# Rouvem Pishchik 4514562
+	.pos 0
+	irmovq stack, %rsp
+	call main
+	halt
+
+.align 8
+matA:
+	.quad 0x001
+	.quad 0x002
+	.quad 0x004
+	.quad 0x008
+matB:
+	.quad 0x001
+	.quad 0x002
+	.quad 0x004
+	.quad 0x008
+matC:
+	.quad 0x000
+	.quad 0x000
+	.quad 0x000
+	.quad 0x000
+main:
+	irmovq matA, %rdi
+	irmovq matB, %rsi
+	irmovq $2, %rdx
+	call matrix_and_xor
+	ret
+
+matrix_and_xor:
+	xorq %rax, %rax
+	addq %rdx, %rdx
+	irmovq matC, %r14
+	irmovq $8, %r8
+	irmovq $1, %rbx
+	rrmovq %rdx, %r9 # contains size!
+	andq %r9, %r9
+	jmp test
+loop:
+	mrmovq (%rdi), %r10
+	mrmovq (%rsi), %r11
+	andq %r10, %r11
+	rmmovq %r11, (%r14)
+	xorq %r10, %r10
+	xorq %r11, %r11
+	mrmovq (%r14), %r13
+	addq %r8, %rdi
+	addq %r8, %rsi
+	addq %r8, %r14
+	xorq %r13, %rax
+	subq %rbx, %r9
+test:
+	jne loop
+	ret
+
+
+.pos 0x400
+stack:
